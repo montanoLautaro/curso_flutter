@@ -1,0 +1,12 @@
+StatelessWidget
+se construye muy rapido, no mantiene el estado por si mismo
+
+StatefulWidget
+son mas pesados que los anteriores, pero permiten el cambio de estado 
+
+Column 
+no puede ser const porque necesita saber las dimenciones de la pantalla, para determinar en runetime sus propias dimensiones.
+widget que puede tener mas de un elemento hijo
+
+Scaffold 
+Implementa una estructura basica de material al layout, tiene algunos widgets prefabricados como un floating action button y un appbar

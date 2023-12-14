@@ -1,0 +1,11 @@
+Visual studio
+extenciones:
+- activitus bar
+- error lens
+- paste json as code
+- better comments
+- terminal
+- aesome flutter snippets
+- bloc
+- pubspec assist
+- material icon theme
