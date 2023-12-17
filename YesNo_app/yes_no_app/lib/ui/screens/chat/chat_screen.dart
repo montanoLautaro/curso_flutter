@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:yes_no_app/domain/entities/message.dart';
+import 'package:yes_no_app/ui/providers/chat_provider.dart';
 import 'package:yes_no_app/ui/widgets/chat/her_message_bubble.dart';
 import 'package:yes_no_app/ui/widgets/chat/my_message_bubble.dart';
+import 'package:yes_no_app/ui/widgets/shared/message_field_bottom.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -18,7 +22,6 @@ class ChatScreen extends StatelessWidget {
           ),
         ),
         title: const Text("Hades II"),
-        centerTitle: true,
       ),
       body: const _ChatView(),
     );
@@ -30,24 +33,39 @@ class _ChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //! SafeArea limita al widget hijo en las zonas de los botones en la pantalla (bottom)
+    //* obtenemos la referencia al ChatProvider y vigila si cambia su estado
+    final chatProvider = context.watch<ChatProvider>();
+
+    //* SafeArea limita al widget hijo en las zonas de los botones en la pantalla (bottom)
     return SafeArea(
-      //! Padding() para aplicarle padding al widget
-      //! const EdgeInsets.symmetric(horizontal, vertical) le da un padding simetrico tanto horizontal como vertical
+      //*Padding() para aplicarle padding al widget
+      //* const EdgeInsets.symmetric(horizontal, vertical) le da un padding simetrico tanto horizontal como vertical
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
-          //!Expanded: expande al widget hijo dentro del espacio disponible
+          //*Expanded: expande al widget hijo dentro del espacio disponible
           children: [
             Expanded(
                 child: ListView.builder(
-              itemCount: 100,
+              //* Scroll automatico de la pantalla hacia abajo
+              controller: chatProvider.chatScrollController,
+              itemCount: chatProvider.messageList.length,
               itemBuilder: (context, index) {
-                return (index % 2 == 0)
-                    ? const HerMessageBubble()
-                    : const MyMessageBubble();
+                //obtengo el mensaje
+                final message = chatProvider.messageList[index];
+
+                return (message.fromWho == FromWho.theirs)
+                    ? HerMessageBubble(
+                        message: message.text,
+                        imageUrl: message.imageUrl,
+                      )
+                    : MyMessageBubble(message: message.text);
               },
-            ))
+            )),
+            MessageFieldBox(
+              //* utilizo el callback para enviarle el texto al provider
+              onValue: (value) => chatProvider.sendMessage(value),
+            )
           ],
         ),
       ),
